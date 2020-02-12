@@ -1,6 +1,5 @@
 package bio;
 
-import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
@@ -11,19 +10,16 @@ import java.net.Socket;
  * @description
  */
 public class BioClient {
-    public static void main(String[] args) throws IOException {
-
+    public static void main(String[] args) {
         // 发送
-        Socket socket = new Socket(InetAddress.getByName("gps.leayun.cn"), 32082);
-        OutputStream outputStream = socket.getOutputStream();
-
-        String data = "0A,3,863921030884418,23.178061,0,113.225998,0,2020/01/18 17:28:30,051,4,FF,";
-        data = getData(data) + "\n";
-        outputStream.write(data.getBytes());
-        outputStream.close();
-        socket.close();
-
-
+        try (Socket socket = new Socket(InetAddress.getByName("localhost"), 6666);
+             OutputStream outputStream = socket.getOutputStream()) {
+            String data = "0A,3,863921030884418,23.178061,0,113.225998,0,2020/01/18 17:28:30,051,4,FF,";
+            data = getData(data) + "\n";
+            outputStream.write(data.getBytes());
+        } catch (Exception e) {
+            System.out.println(e);
+        }
     }
 
     static String getData(String source) {
