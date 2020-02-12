@@ -1,4 +1,4 @@
-package nio;
+package nio.file_operate;
 
 
 import java.io.File;
@@ -22,15 +22,12 @@ public class NioFileChannel {
         String data = "hello iceWang";
         dataToFile(data, "file01.txt");
 
-
         // 文件读取
         dataFromFile("file01.txt");
 
         // 文件拷贝
         copyFileUseBuffer("file01.txt", "file02.txt");
         copyFileUseChannelTransfer("file01.txt", "file03.txt");
-
-
     }
 
 
@@ -46,7 +43,6 @@ public class NioFileChannel {
              FileChannel fileOutputStreamChannel = fileOutputStream.getChannel()) {
 
             // 分配缓冲区
-
             ByteBuffer byteBuffer = ByteBuffer.allocate(BYTE_BUFFER_LENGTH);
             // 将输入流中的数据写到缓冲区
             // 这里需要循环读取，如果是大文件，不能直接建立一个很大的内存空间，然后将其全部放进去，并且还可能放不进去

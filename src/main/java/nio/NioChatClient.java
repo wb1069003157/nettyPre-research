@@ -1,7 +1,5 @@
 package nio;
 
-import lombok.extern.slf4j.Slf4j;
-
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
@@ -19,7 +17,6 @@ import java.util.Set;
  * @date 2020/1/11
  * @description nio客户端
  */
-@Slf4j
 public class NioChatClient {
 
     private Selector selector;
@@ -46,7 +43,7 @@ public class NioChatClient {
         info = username + " : " + info;
 
         try {
-            System.out.println(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")) + "\n\t\t"+ info);
+            System.out.println(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")) + "\n\t\t" + info);
             socketChannel.write(ByteBuffer.wrap(info.getBytes()));
 
         } catch (IOException e) {
@@ -71,7 +68,7 @@ public class NioChatClient {
                         if (read > 0) {
                             String message = new String(byteBuffer.array());
 //                            System.out.println("正常读： form client :" + message);
-                            System.out.println(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")) + "\n\t\t"+ message);
+                            System.out.println(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")) + "\n\t\t" + message);
                         } else {
                             System.out.println("client closed");
 

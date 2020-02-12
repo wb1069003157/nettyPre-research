@@ -53,7 +53,7 @@ public class OldIoServer {
 
             while (true) {
                 int read = dataInputStream.read(bytes, 0, bytes.length);
-                if (read == -1){
+                if (read == -1) {
                     break;
                 }
             }

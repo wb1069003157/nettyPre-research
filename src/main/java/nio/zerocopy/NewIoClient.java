@@ -1,6 +1,7 @@
 package nio.zerocopy;
 
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -16,10 +17,11 @@ import java.nio.channels.SocketChannel;
  * @date 2020/1/13
  * @description nio 客户端 ,统计零拷贝技术下，所需耗时
  */
-@Slf4j
 public class NewIoClient {
+    private static final Logger logger = LoggerFactory.getLogger(NewIoClient.class);
 
     public static void main(String[] args) {
+
         try {
 
             Selector selector = Selector.open();
@@ -27,7 +29,6 @@ public class NewIoClient {
             SocketChannel socketChannel = SocketChannel.open(inetSocketAddress);
             socketChannel.configureBlocking(false);
             socketChannel.register(selector, SelectionKey.OP_READ);
-
 
             long start = System.currentTimeMillis();
             File file = new File("1.tgz");
@@ -40,15 +41,15 @@ public class NewIoClient {
                 long byteCount = 0;
                 long transferToCount = 0;
                 long count = channel.size() / 8388608;
-                log.info("需要传输次数 ： {}", count);
+                logger.info("需要传输次数 ： {}", count);
                 for (long i = 0; i <= count; i++) {
                     transferToCount = channel.transferTo(i * 8388608, 8388608, socketChannel);
-                    log.info("本次传输大小： {}，目前总字节大小：{}", transferToCount, byteCount);
+                    logger.info("本次传输大小： {}，目前总字节大小：{}", transferToCount, byteCount);
                     byteCount = byteCount + transferToCount;
                 }
 
 //                transferToCount = channel.transferTo(0, channel.size(), socketChannel);
-                log.info("send success ,total byte : {},consumer time : {}", byteCount, System.currentTimeMillis() - start);
+                logger.info("send success ,total byte : {},consumer time : {}", byteCount, System.currentTimeMillis() - start);
             }
 
         } catch (IOException e) {

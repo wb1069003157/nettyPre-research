@@ -64,7 +64,7 @@ public class BioServer {
             }
         } catch (IOException e) {
             System.out.println(e);
-        }finally {
+        } finally {
             System.out.println("关闭和client连接！！！");
             try {
                 socket.close();

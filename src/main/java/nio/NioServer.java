@@ -16,14 +16,12 @@ import java.util.Set;
  */
 public class NioServer {
     ServerSocketChannel serverSocketChannel;
-
     Selector selector;
-
     InetSocketAddress inetSocketAddress;
 
     public NioServer() {
         try {
-            // 生成一个 ServerSocketChannel Selector，并将 ServerSocketChannel 绑定到指定端口
+            // 生成一个 ServerSocketChannel和Selector，并将 ServerSocketChannel 绑定到指定端口
             serverSocketChannel = ServerSocketChannel.open();
             selector = Selector.open();
             InetSocketAddress inetSocketAddress = new InetSocketAddress(6666);
@@ -38,7 +36,6 @@ public class NioServer {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 
     public void listen() {
@@ -46,6 +43,7 @@ public class NioServer {
 
             while (true) {
                 // 没有事件发生，就干其他事
+
                 if (selector.select(3000) == 0) {
 //                    System.out.println("waiting 5s,no connect");
                     continue;
@@ -96,9 +94,7 @@ public class NioServer {
 
     private void readData(SelectionKey selectionKey) throws IOException {
         SocketChannel socketChannel = (SocketChannel) selectionKey.channel();
-
         ByteBuffer byteBuffer = ByteBuffer.allocate(1024);
-
 
         try {
 
@@ -119,20 +115,9 @@ public class NioServer {
             // 将该键移除出 set
             selectionKey.cancel();
         }
-
-
-        // 判断客户端是否是退出   切断客户端链接时，会一直出发SocketChannel读就绪事件
-//        if (read > 0) {
-//
-//        } else {
-////            System.out.println("client closed");
-//
-//        }
     }
 
     private void sendInfoToOtherClients(SocketChannel socketChannel, String message) throws IOException {
-//        System.out.println("服务器转发消息。。。");
-
         for (SelectionKey key : selector.keys()) {
             SelectableChannel sourceChannel = key.channel();
             if (sourceChannel instanceof SocketChannel && sourceChannel != socketChannel) {
@@ -144,10 +129,7 @@ public class NioServer {
     }
 
     public static void main(String[] args) {
-
         NioServer nioServer = new NioServer();
-
         nioServer.listen();
-
     }
 }
