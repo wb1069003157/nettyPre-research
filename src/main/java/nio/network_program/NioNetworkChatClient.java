@@ -1,5 +1,8 @@
 package nio;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
@@ -17,40 +20,41 @@ import java.util.Set;
  * @date 2020/1/11
  * @description nio客户端
  */
-public class NioChatClient {
+public class NioNetworkChatClient {
+    private Logger logger = LoggerFactory.getLogger(NioNetworkChatClient.class);
 
     private Selector selector;
     private SocketChannel socketChannel;
     private String username;
 
-
-    public NioChatClient() {
+    public NioNetworkChatClient() {
         try {
             selector = Selector.open();
             InetSocketAddress inetSocketAddress = new InetSocketAddress("localhost", 6666);
             socketChannel = SocketChannel.open(inetSocketAddress);
             socketChannel.configureBlocking(false);
             socketChannel.register(selector, SelectionKey.OP_READ);
-
             username = socketChannel.getLocalAddress().toString().substring(1);
-
         } catch (Exception e) {
-
+            logger.error("构建客户端错误，错误原因：{0}", e);
         }
     }
 
     public void sendInfo(String info) {
         info = username + " : " + info;
-
         try {
-            System.out.println(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")) + "\n\t\t" + info);
+            logger.info("{},{},{}", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")), "\n\t\t", info);
             socketChannel.write(ByteBuffer.wrap(info.getBytes()));
-
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("发送数据错误，错误原因：{0}", e);
         }
     }
 
+    /**
+     * 1. 获取selector上发生的事件
+     * 2. 如果是读事件，则将数据通过 Channel 和 Buffer 进行操作
+     * 3. 处理完成后，将该key从待处理keys中删除
+     */
     public void readInfo() {
         try {
             int readChannel = selector.select();
@@ -60,21 +64,17 @@ public class NioChatClient {
                 while (iterator.hasNext()) {
                     SelectionKey selectionKey = iterator.next();
                     if (selectionKey.isReadable()) {
-                        SocketChannel socketChannel = (SocketChannel) selectionKey.channel();
-
+                        SocketChannel handingSocketChannel = (SocketChannel) selectionKey.channel();
                         ByteBuffer byteBuffer = ByteBuffer.allocate(1024);
 
-                        int read = socketChannel.read(byteBuffer);
+                        int read = handingSocketChannel.read(byteBuffer);
                         if (read > 0) {
                             String message = new String(byteBuffer.array());
-//                            System.out.println("正常读： form client :" + message);
-                            System.out.println(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")) + "\n\t\t" + message);
+                            logger.info("{},{},{}", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")), "\n\t\t", message);
                         } else {
-                            System.out.println("client closed");
-
+                            logger.info("client closed");
                             // 将关闭连接的 channel 关闭
-                            socketChannel.close();
-
+                            handingSocketChannel.close();
                             // 将该键移除出 set
                             selectionKey.cancel();
                         }
@@ -82,21 +82,28 @@ public class NioChatClient {
                 }
                 iterator.remove();
             } else {
-
+                logger.info("当前没有 channel 可供使用！");
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
+    /**
+     * 1. 启动一个线程来定时读取 Server 可能发送的数据，如果没有，就休眠，等待下次读取
+     * 2. 启动一个获取控制台输出来进行数据的发送
+     *
+     * @param args
+     */
     public static void main(String[] args) {
-        final NioChatClient nioChatClient = new NioChatClient();
+        NioNetworkChatClient nioNetworkChatClient = new NioNetworkChatClient();
 
+        // 线程资源必须通过线程池提供，不允许在应用中自行显式创建线程,但跟前面一样，这里因为不是重点，就先这样用着
         new Thread() {
             @Override
             public void run() {
                 while (true) {
-                    nioChatClient.readInfo();
+                    nioNetworkChatClient.readInfo();
                     try {
                         sleep(3000);
                     } catch (Exception e) {
@@ -107,11 +114,10 @@ public class NioChatClient {
             }
         }.start();
 
-
         Scanner scanner = new Scanner(System.in);
         while (scanner.hasNextLine()) {
             String message = scanner.nextLine();
-            nioChatClient.sendInfo(message);
+            nioNetworkChatClient.sendInfo(message);
         }
     }
 }
