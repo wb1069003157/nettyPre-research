@@ -16,13 +16,10 @@ public class OldIoClient {
     private static final Logger logger = LoggerFactory.getLogger(OldIoClient.class);
 
     public static void main(String[] args) {
-        try {
-            Socket socket = new Socket(InetAddress.getByName("localhost"), 6666);
-
-            File file = new File("1.tgz");
-            InputStream inputStream = new FileInputStream(file);
-
-            DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
+        File file = new File("1.jar");
+        try (Socket socket = new Socket(InetAddress.getByName("localhost"), 6666);
+             InputStream inputStream = new FileInputStream(file);
+             DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());) {
 
             byte[] bytes = new byte[4096];
             long readCount;
@@ -35,13 +32,7 @@ public class OldIoClient {
                 dataOutputStream.write(bytes);
             }
             logger.info("send success ,total byte : {},consumer time : {}", total, System.currentTimeMillis() - start);
-
-            dataOutputStream.close();
-            inputStream.close();
-            socket.close();
-
         } catch (IOException e) {
-            e.printStackTrace();
 
         }
     }

@@ -32,8 +32,8 @@ public class NioFileChannel {
         dataFromFile("file01.txt");
 
         // 文件拷贝
-        copyFileUseBuffer("file01.txt", "file02.txt");
-        copyFileUseChannelTransfer("file01.txt", "file03.txt");
+        copyFileUseBuffer("1.jar", "2.jar");
+        copyFileUseChannelTransfer("1.jar", "3.jar");
     }
 
     // 将两个channel通过byteBuffer进行转移

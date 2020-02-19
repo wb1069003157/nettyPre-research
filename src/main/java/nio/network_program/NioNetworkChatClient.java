@@ -1,4 +1,4 @@
-package nio;
+package nio.network_program;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
