@@ -19,7 +19,7 @@ public class OldIoClient {
         File file = new File("1.jar");
         try (Socket socket = new Socket(InetAddress.getByName("localhost"), 6666);
              InputStream inputStream = new FileInputStream(file);
-             DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());) {
+             DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream())) {
 
             byte[] bytes = new byte[4096];
             long readCount;
