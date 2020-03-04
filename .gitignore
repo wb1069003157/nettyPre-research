@@ -125,3 +125,5 @@ cmake-build-debug/
 uploadroot/
 
 src/main/java/com/gree/soap/
+
+node_modules
