@@ -15,9 +15,8 @@ public class NettyClientHandler extends SimpleChannelInboundHandler<MessageProto
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        //使用客户端发送 10 条数据
-        String message = "iceWang is handsome,他是真的帅!!!";
-        for (int i = 0; i < 10; ++i) {
+        for (int i = 0; i < 5; ++i) {
+            String message = "iceWang是真的帅!!!";
             byte[] content = message.getBytes(Charset.forName("utf-8"));
             int length = content.length;
 

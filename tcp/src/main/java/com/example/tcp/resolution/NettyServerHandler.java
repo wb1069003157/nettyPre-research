@@ -19,9 +19,10 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<MessageProto
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, MessageProtocal msg) throws Exception {
         //将 buffer 转成字符串
-        System.out.println("服务器接收到数据 " + msg.getLength());
-        System.out.println("服务器接收到数据 " + new String(msg.getContent(), CharsetUtil.UTF_8));
-        System.out.println("服务器接收到消息量=" + (++this.count));
+        System.out.println("服务器接收到数据长度 " + msg.getLength());
+        System.out.println("服务器接收到数据内容 " + new String(msg.getContent(), CharsetUtil.UTF_8));
+        System.out.println("服务器接收到次数=" + (++this.count));
+        System.out.println();
         //服务器回送数据给客户端, 回送一个随机 id ,
 //        ByteBuf responseByteBuf = Unpooled.copiedBuffer(
 //                UUID.randomUUID().toString() + " ", Charset.forName("utf-8"));

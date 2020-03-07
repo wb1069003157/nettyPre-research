@@ -15,16 +15,19 @@ public class ServerDecoder extends ReplayingDecoder<Void> {
 
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
-        System.out.println("ServerDecoder 被调用！！！");
+        System.out.println("ServerDecoder.decode() 被调用！！！");
         int length = in.readInt();
 
-        byte[] content = new byte[length];
-        in.readBytes(content);
+        if (length != 0) {
 
-        MessageProtocal messageProtocal = new MessageProtocal();
-        messageProtocal.setLength(length);
-        messageProtocal.setContent(content);
+            byte[] content = new byte[length];
+            in.readBytes(content);
 
-        out.add(messageProtocal);
+            MessageProtocal messageProtocal = new MessageProtocal();
+            messageProtocal.setLength(length);
+            messageProtocal.setContent(content);
+
+            out.add(messageProtocal);
+        }
     }
 }

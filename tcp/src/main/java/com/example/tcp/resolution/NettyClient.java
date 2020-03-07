@@ -29,7 +29,7 @@ public class NettyClient {
                         protected void initChannel(SocketChannel ch) throws Exception {
                             ch.pipeline()
                                     .addLast(new ClientEncoder())
-                                    .addLast(new NettyClientHandler()); //加入自己的处理器
+                                    .addLast(new NettyClientHandler());
                         }
                     });
             logger.info("============客户端配置参数完成，准备连接服务端============");
